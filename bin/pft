@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'pft'
+require 'choice'
+
+Choice.options do
+  banner "Usage: #{File.basename(__FILE__)} [-adhrt] [message]"
+
+  header ''
+  header 'Configuration options:'
+  
+  option :authorize do
+    short '-a'
+    long '--authorize'
+    desc "Associate your twitter account using OAuth"
+    default false
+  end
+
+  separator ''
+  separator 'Tweet options:'
+
+  option :dm do
+    short '-d'
+    long '--dm=USERNAME'
+    desc "Send a direct message to username"
+    default nil
+  end
+
+  option :reply do
+    short '-r'
+    long '--reply=USERNAME'
+    desc "Send a reply to username's last tweet"
+    default nil
+  end
+
+  option :rt do
+    short '-t'
+    long '--rt=USERNAME'
+    desc "Post a retweet of username's last tweet"
+    default nil
+  end
+
+  separator ''
+  separator 'Common options: '
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    short '-v'
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "#{File.basename(__FILE__)} v#{Pft::Base.version}"
+      exit
+    end
+  end
+end
+
+Pft::Base.tweet(Choice.choices, Choice.rest) rescue puts $!
+#CIJoe::Server.start(options[:host], options[:port], Choice.rest[0])
