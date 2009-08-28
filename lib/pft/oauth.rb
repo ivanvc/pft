@@ -26,7 +26,12 @@ module Pft
       raise "Cannot authorize the account" if authorize.downcase == "n"
       consumer = OAuth::Consumer.new(@key, @secret, {:site => 'http://twitter.com'})
       request_token = consumer.get_request_token
-      system "open #{request_token.authorize_url}"
+      url = request_token.authorize_url
+      if RUBY_PLATFORM =~ /darwin/
+        system "open #{url}"
+      elsif !system("firefox #{url}")
+          puts "Please point your browser to: \n\n#{url}\n\n"
+      end
       puts "Please enter the provided PIN:"
       pin = Base.input.gets.chomp
       access_token = request_token.get_access_token(:oauth_verifier => pin) rescue false
